@@ -51,31 +51,39 @@ impl Game {
         }
     }
 
+    fn read_input(&mut self, player: i32) {
+        match player {
+            1 => println!("Player X please input your first placement: "),
+            2 => println!("Player O please input your first placement: "),
+            _ => ()
+        }
+
+        let mut value = String::new();
+        std::io::stdin().read_line(&mut value).expect("Error reading");
+        let value = value.trim().parse::<i32>();
+        let mut coords : (i32, i32) = (0, 0);
+        match value.unwrap() {
+            1 => coords = (0, 0),
+            2 => coords = (1, 0),
+            3 => coords = (2, 0),
+            4 => coords = (0, 1),
+            5 => coords = (1, 1),
+            6 => coords = (2, 1),
+            7 => coords = (0, 2),
+            8 => coords = (1, 2),
+            9 => coords = (2, 2),
+            _ => ()
+        }
+
+        print!("\x1B[2J");
+        self.pieces[coords.1 as usize][coords.0 as usize] = player as usize;
+    }
+
     fn game_iteration(&mut self) -> &str {
         print!("\x1B[2J");
-        self.print_board();
-
-        println!("Player X please input your first placement: ");
-        let mut x = String::new();
-        std::io::stdin().read_line(&mut x).expect("Error reading");
-        let x = x.trim().parse::<i32>();
-        let mut coords : (i32, i32) = (0, 0);
-        match x.unwrap() {
-            1 => coords = (0, 0),
-            2 => coords = (1, 0),
-            3 => coords = (2, 0),
-            4 => coords = (0, 1),
-            5 => coords = (1, 1),
-            6 => coords = (2, 1),
-            7 => coords = (0, 2),
-            8 => coords = (1, 2),
-            9 => coords = (2, 2),
-            _ => ()
-        }
         
-        print!("\x1B[2J");
-        self.pieces[coords.1 as usize][coords.0 as usize] = 1 as usize;
-
+        self.print_board();
+        self.read_input(1);
         self.print_board();
         // Check if anyone has won yet.
         let finished = self.check_win_lose();
@@ -85,27 +93,7 @@ impl Game {
             _ => ()
         }
 
-        println!("Player O please input your first placement: ");
-        let mut x = String::new();
-        std::io::stdin().read_line(&mut x).expect("Error reading");
-        let x = x.trim().parse::<i32>();
-        let mut coords : (i32, i32) = (0, 0);
-        match x.unwrap() {
-            1 => coords = (0, 0),
-            2 => coords = (1, 0),
-            3 => coords = (2, 0),
-            4 => coords = (0, 1),
-            5 => coords = (1, 1),
-            6 => coords = (2, 1),
-            7 => coords = (0, 2),
-            8 => coords = (1, 2),
-            9 => coords = (2, 2),
-            _ => ()
-        }
-
-        print!("\x1B[2J");
-        self.pieces[coords.1 as usize][coords.0 as usize] = 2 as usize;
-
+        self.read_input(2);
         self.print_board();
         // Check if anyone has won yet.
         let finished = self.check_win_lose();
@@ -114,65 +102,6 @@ impl Game {
             "Y" => { return "Y wins!" },
             _ => { return "ITERATE" }
         }
-
-        /*
-        // Inputting coordinates for the X player (X, Y coords).
-        // Read coords first and parse them into usize values.
-        println!("Player X please input your first coordinate (X coord): ");
-
-        let mut first_x_coord = String::new();
-        std::io::stdin().read_line(&mut first_x_coord).expect("Error reading");
-        let first_x_coord = first_x_coord.trim().parse::<usize>();
-
-        println!("Player X please input your second coordinate (Y coord): ");
-
-        let mut second_x_coord = String::new();
-        std::io::stdin().read_line(&mut second_x_coord).expect("Error reading");
-        let second_x_coord = second_x_coord.trim().parse::<usize>();
-
-        // Assign the X value (1) to the specified coords.
-        self.pieces[second_x_coord.unwrap()][first_x_coord.unwrap()] = 1 as usize;
-
-        // Print the board to the user.
-        self.print_board();
-
-        // Check if anyone has won yet.
-        let finished = self.check_win_lose();
-        match finished.as_str() {
-            "X" => { return "X wins!" },
-            "Y" => { return "Y wins!" },
-            _ => {}
-        }
-
-
-        // Inputting coordinates for the O player (X, Y coords).
-        // Read coords first and parse them into usize values.
-        println!("Player O please input your first coordinate (X coord): ");
-
-        let mut first_o_coord = String::new();
-        std::io::stdin().read_line(&mut first_o_coord).expect("Error reading");
-        let first_o_coord = first_o_coord.trim().parse::<usize>();
-
-        println!("Player O please input your second coordinate (Y coord): ");
-
-        let mut second_o_coord = String::new();
-        std::io::stdin().read_line(&mut second_o_coord).expect("Error reading");
-        let second_o_coord = second_o_coord.trim().parse::<usize>();
-
-        // Assign the O value (2) to the specified coords.
-        self.pieces[second_o_coord.unwrap()][first_o_coord.unwrap()] = 2 as usize;
-
-        // Print the board to the user.
-        self.print_board();
-
-        // Check if anyone has won yet.
-        let finished = self.check_win_lose();
-        match finished.as_str() {
-            "X" => { return "X wins!" },
-            "Y" => { return "Y wins!" },
-            _ => { return "ITERATE" }
-        }
-        */
     }
 
     fn check_win_lose(&self) -> String {
