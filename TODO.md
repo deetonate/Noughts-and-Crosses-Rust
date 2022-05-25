@@ -1,6 +1,3 @@
-﻿ - Add detection for diagonal wins.
- - Improve the formatting of the game.
- - Take input for both coordinates on one line.
- - Add multiple games and player names.
+﻿ - Add multiple games and player names.
  - Split code up into multiple files with modules.
- - 
+ - Detection for repeated placement (O tries to place on same box twice or one of X's boxes).

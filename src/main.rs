@@ -13,6 +13,10 @@ impl Game {
     }
 
     fn print_board(&self) {
+        println!("------------");
+
+        let mut counter : u32 = 1; // This is for displaying the box indexes to the user.
+
         // Matching piece numbers to letters and displaying them to make the board.
         for elem in self.pieces {
             let mut first : char = '_';
@@ -35,11 +39,83 @@ impl Game {
                 2 => third = 'Y',
                 _ => {}
             }
-            println!("{} {} {}", first, second, third);
+
+            for _i in 0..3 {
+                print!("{}   ", counter);
+                counter += 1;
+            }
+            println!("");
+
+            println!("{} | {} | {}", first, second, third);
+            println!("------------");
         }
     }
 
     fn game_iteration(&mut self) -> &str {
+        print!("\x1B[2J");
+        self.print_board();
+
+        println!("Player X please input your first placement: ");
+        let mut x = String::new();
+        std::io::stdin().read_line(&mut x).expect("Error reading");
+        let x = x.trim().parse::<i32>();
+        let mut coords : (i32, i32) = (0, 0);
+        match x.unwrap() {
+            1 => coords = (0, 0),
+            2 => coords = (1, 0),
+            3 => coords = (2, 0),
+            4 => coords = (0, 1),
+            5 => coords = (1, 1),
+            6 => coords = (2, 1),
+            7 => coords = (0, 2),
+            8 => coords = (1, 2),
+            9 => coords = (2, 2),
+            _ => ()
+        }
+        
+        print!("\x1B[2J");
+        self.pieces[coords.1 as usize][coords.0 as usize] = 1 as usize;
+
+        self.print_board();
+        // Check if anyone has won yet.
+        let finished = self.check_win_lose();
+        match finished.as_str() {
+            "X" => { return "X wins!" },
+            "Y" => { return "Y wins!" },
+            _ => ()
+        }
+
+        println!("Player O please input your first placement: ");
+        let mut x = String::new();
+        std::io::stdin().read_line(&mut x).expect("Error reading");
+        let x = x.trim().parse::<i32>();
+        let mut coords : (i32, i32) = (0, 0);
+        match x.unwrap() {
+            1 => coords = (0, 0),
+            2 => coords = (1, 0),
+            3 => coords = (2, 0),
+            4 => coords = (0, 1),
+            5 => coords = (1, 1),
+            6 => coords = (2, 1),
+            7 => coords = (0, 2),
+            8 => coords = (1, 2),
+            9 => coords = (2, 2),
+            _ => ()
+        }
+
+        print!("\x1B[2J");
+        self.pieces[coords.1 as usize][coords.0 as usize] = 2 as usize;
+
+        self.print_board();
+        // Check if anyone has won yet.
+        let finished = self.check_win_lose();
+        match finished.as_str() {
+            "X" => { return "X wins!" },
+            "Y" => { return "Y wins!" },
+            _ => { return "ITERATE" }
+        }
+
+        /*
         // Inputting coordinates for the X player (X, Y coords).
         // Read coords first and parse them into usize values.
         println!("Player X please input your first coordinate (X coord): ");
@@ -96,6 +172,7 @@ impl Game {
             "Y" => { return "Y wins!" },
             _ => { return "ITERATE" }
         }
+        */
     }
 
     fn check_win_lose(&self) -> String {
@@ -111,13 +188,29 @@ impl Game {
         }
 
         // Check if anyone has a vertical win.
-        for iter in 0..3 {
-            if self.pieces[0][iter] == self.pieces[1][iter] && self.pieces[1][iter] == self.pieces[2][iter] {
-                match self.pieces[0][iter] {
+        for elem in 0..3 {
+            if self.pieces[0][elem] == self.pieces[1][elem] && self.pieces[1][elem] == self.pieces[2][elem] {
+                match self.pieces[0][elem] {
                     1 => return "X".to_string(),
                     2 => return "Y".to_string(),
                     _ => return "ERROR".to_string()
                 }
+            }
+        }
+
+        // Check if anyone has a diagonal win.
+        if self.pieces[0][0] == self.pieces[1][1] && self.pieces[1][1] == self.pieces[2][2] {
+            match self.pieces[0][0] {
+                1 => return "X".to_string(),
+                2 => return "Y".to_string(),
+                _ => return "ERROR".to_string()
+            }
+        }
+        if self.pieces[0][2] == self.pieces[1][1] && self.pieces[1][1] == self.pieces[2][0] {
+            match self.pieces[0][2] {
+                1 => return "X".to_string(),
+                2 => return "Y".to_string(),
+                _ => return "ERROR".to_string()
             }
         }
 
